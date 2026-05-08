@@ -6,21 +6,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.Random;
 
 public class PuckleController {
 
-    // ---------------- GRID LABELS ----------------
     @FXML private Label r0c0; @FXML private Label r0c1; @FXML private Label r0c2; @FXML private Label r0c3; @FXML private Label r0c4;
     @FXML private Label r1c0; @FXML private Label r1c1; @FXML private Label r1c2; @FXML private Label r1c3; @FXML private Label r1c4;
     @FXML private Label r2c0; @FXML private Label r2c1; @FXML private Label r2c2; @FXML private Label r2c3; @FXML private Label r2c4;
@@ -28,18 +24,15 @@ public class PuckleController {
     @FXML private Label r4c0; @FXML private Label r4c1; @FXML private Label r4c2; @FXML private Label r4c3; @FXML private Label r4c4;
     @FXML private Label r5c0; @FXML private Label r5c1; @FXML private Label r5c2; @FXML private Label r5c3; @FXML private Label r5c4;
 
-    // ---------------- BUTTONS ----------------
     @FXML private Button submitButton;
     @FXML private Button clearButton;
     @FXML private Button restartButton;
     @FXML private Button exitButton;
 
-    // ---------------- UI ----------------
     @FXML private ImageView logoImage;
     @FXML private ComboBox<String> themeDropdown;
     @FXML private BorderPane rootPane;
 
-    // ---------------- GAME STATE ----------------
     private Label[][] board;
     private int currentRow = 0;
     private int currentCol = 0;
@@ -49,7 +42,6 @@ public class PuckleController {
 
     private boolean hasSubmitted = false;
 
-    // ---------------- INIT ----------------
     @FXML
     public void initialize() {
 
@@ -86,7 +78,6 @@ public class PuckleController {
         applyTheme("Light");
     }
 
-    // ---------------- INPUT ----------------
     private void handleKeyTyped(KeyEvent event) {
 
         String character = event.getCharacter().toUpperCase();
@@ -113,7 +104,6 @@ public class PuckleController {
         currentCol = 0;
     }
 
-    // ---------------- GAME LOGIC ----------------
     private void submitGuess() {
 
         if (currentCol < 5) return;
@@ -160,7 +150,6 @@ public class PuckleController {
         }
     }
 
-    // ---------------- FIXED RESTART (NO WHITE RESET BUG) ----------------
     private void restartGame() {
 
         currentRow = 0;
@@ -189,7 +178,6 @@ public class PuckleController {
         rootPane.requestFocus();
     }
 
-    // ---------------- THEME ----------------
     private void applyTheme(String theme) {
 
         Scene scene = rootPane.getScene();
@@ -253,7 +241,6 @@ public class PuckleController {
         }
     }
 
-    // ---------------- FORCE TEXT WHITE AFTER SUBMIT ----------------
     private void forceAllTextWhite() {
 
         for (int r = 0; r < 6; r++) {
@@ -269,7 +256,6 @@ public class PuckleController {
         }
     }
 
-    // ---------------- WIN ----------------
     private void showWinWindow() {
 
         Stage winStage = new Stage();
@@ -296,7 +282,6 @@ public class PuckleController {
         winStage.show();
     }
 
-    // ---------------- LOSE ----------------
     private void showLoseWindow() {
 
         Stage loseStage = new Stage();

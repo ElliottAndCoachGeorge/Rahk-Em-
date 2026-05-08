@@ -4,6 +4,7 @@
 
 .label {
     -fx-text-fill: black;
+    -fx-background-color: #e0e0e0;
 }
 
 .button {
