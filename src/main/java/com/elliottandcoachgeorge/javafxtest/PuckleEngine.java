@@ -2,7 +2,7 @@ package com.elliottandcoachgeorge.javafxtest;
 
 import java.util.*;
 
-public class Game {
+public class PuckleEngine {
 
     private static final String GREEN = "\u001b[42;1m";
     private static final String YELLOW = "\u001b[43;1m";
@@ -82,7 +82,7 @@ public class Game {
 
     private String target;
 
-    public Game() {
+    public PuckleEngine() {
         target = WORDS[(int)(Math.random() * WORDS.length)];
     }
 
@@ -145,6 +145,6 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        new Game().play();
+        new PuckleEngine().play();
     }
 }
