@@ -13,6 +13,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PuckleController {
@@ -34,10 +38,12 @@ public class PuckleController {
     @FXML private BorderPane rootPane;
 
     private Label[][] board;
+
     private int currentRow = 0;
     private int currentCol = 0;
 
-    private final String[] WORDS = {"LUCAS"};
+    private String[] WORDS;
+
     private String targetWord;
 
     private boolean hasSubmitted = false;
@@ -54,11 +60,16 @@ public class PuckleController {
                 {r5c0, r5c1, r5c2, r5c3, r5c4}
         };
 
+        loadWords();
+
         targetWord = WORDS[new Random().nextInt(WORDS.length)];
 
         submitButton.setOnAction(e -> submitGuess());
+
         clearButton.setOnAction(e -> clearRow());
+
         restartButton.setOnAction(e -> restartGame());
+
         exitButton.setOnAction(e -> System.exit(0));
 
         themeDropdown.setOnAction(e -> applyTheme(themeDropdown.getValue()));
@@ -66,16 +77,65 @@ public class PuckleController {
         rootPane.addEventFilter(KeyEvent.KEY_TYPED, this::handleKeyTyped);
 
         rootPane.setOnKeyPressed(e -> {
+
             if (e.getCode() == KeyCode.ENTER) {
+
                 submitGuess();
             }
         });
 
         rootPane.setFocusTraversable(true);
+
         rootPane.requestFocus();
 
         themeDropdown.setValue("Light");
+
         applyTheme("Light");
+    }
+
+    private void loadWords() {
+
+        ArrayList<String> wordList = new ArrayList<>();
+
+        try {
+
+            InputStream inputStream = getClass().getResourceAsStream("/words.txt");
+
+            if (inputStream == null) {
+
+                System.out.println("words.txt not found");
+
+                wordList.add("LUCAS");
+
+            } else {
+
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(inputStream)
+                );
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+
+                    line = line.trim().toUpperCase();
+
+                    if (line.length() == 5) {
+
+                        wordList.add(line);
+                    }
+                }
+
+                reader.close();
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            wordList.add("LUCAS");
+        }
+
+        WORDS = wordList.toArray(new String[0]);
     }
 
     private void handleKeyTyped(KeyEvent event) {
@@ -83,7 +143,9 @@ public class PuckleController {
         String character = event.getCharacter().toUpperCase();
 
         if (!character.matches("[A-Z]")) {
+
             event.consume();
+
             return;
         }
 
@@ -91,16 +153,22 @@ public class PuckleController {
     }
 
     private void addLetter(String letter) {
+
         if (currentCol < 5) {
+
             board[currentRow][currentCol].setText(letter);
+
             currentCol++;
         }
     }
 
     private void clearRow() {
+
         for (int i = 0; i < 5; i++) {
+
             board[currentRow][i].setText("");
         }
+
         currentCol = 0;
     }
 
@@ -113,39 +181,102 @@ public class PuckleController {
         StringBuilder guessBuilder = new StringBuilder();
 
         for (int i = 0; i < 5; i++) {
+
             guessBuilder.append(board[currentRow][i].getText());
         }
 
         String guess = guessBuilder.toString();
 
+        boolean[] used = new boolean[5];
+
         for (int i = 0; i < 5; i++) {
 
             Label tile = board[currentRow][i];
-            String letter = guess.substring(i, i + 1);
 
-            if (targetWord.substring(i, i + 1).equals(letter)) {
+            String guessLetter = guess.substring(i, i + 1);
 
-                tile.setStyle("-fx-background-color:#6aaa64;-fx-text-fill:white;-fx-border-color:black;-fx-border-width:2;-fx-font-size:28;-fx-font-weight:bold;");
+            String targetLetter = targetWord.substring(i, i + 1);
 
-            } else if (targetWord.contains(letter)) {
+            if (guessLetter.equals(targetLetter)) {
 
-                tile.setStyle("-fx-background-color:#c9b458;-fx-text-fill:white;-fx-border-color:black;-fx-border-width:2;-fx-font-size:28;-fx-font-weight:bold;");
+                used[i] = true;
+
+                tile.setStyle(
+                        "-fx-background-color:#6aaa64;" +
+                                "-fx-text-fill:white;" +
+                                "-fx-border-color:black;" +
+                                "-fx-border-width:2;" +
+                                "-fx-font-size:28;" +
+                                "-fx-font-weight:bold;"
+                );
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+
+            Label tile = board[currentRow][i];
+
+            String guessLetter = guess.substring(i, i + 1);
+
+            String targetLetter = targetWord.substring(i, i + 1);
+
+            if (guessLetter.equals(targetLetter)) {
+
+                continue;
+            }
+
+            boolean found = false;
+
+            for (int j = 0; j < 5; j++) {
+
+                if (!used[j] &&
+                        guessLetter.equals(targetWord.substring(j, j + 1))) {
+
+                    used[j] = true;
+
+                    found = true;
+
+                    break;
+                }
+            }
+
+            if (found) {
+
+                tile.setStyle(
+                        "-fx-background-color:#c9b458;" +
+                                "-fx-text-fill:white;" +
+                                "-fx-border-color:black;" +
+                                "-fx-border-width:2;" +
+                                "-fx-font-size:28;" +
+                                "-fx-font-weight:bold;"
+                );
 
             } else {
 
-                tile.setStyle("-fx-background-color:#787c7e;-fx-text-fill:white;-fx-border-color:black;-fx-border-width:2;-fx-font-size:28;-fx-font-weight:bold;");
+                tile.setStyle(
+                        "-fx-background-color:#787c7e;" +
+                                "-fx-text-fill:white;" +
+                                "-fx-border-color:black;" +
+                                "-fx-border-width:2;" +
+                                "-fx-font-size:28;" +
+                                "-fx-font-weight:bold;"
+                );
             }
         }
 
         if (guess.equals(targetWord)) {
+
             showWinWindow();
+
             return;
         }
 
         currentRow++;
+
         currentCol = 0;
 
         if (currentRow >= 6) {
+
             showLoseWindow();
         }
     }
@@ -153,12 +284,15 @@ public class PuckleController {
     private void restartGame() {
 
         currentRow = 0;
+
         currentCol = 0;
+
         hasSubmitted = false;
 
         targetWord = WORDS[new Random().nextInt(WORDS.length)];
 
         for (int r = 0; r < 6; r++) {
+
             for (int c = 0; c < 5; c++) {
 
                 Label tile = board[r][c];
@@ -170,7 +304,9 @@ public class PuckleController {
                                 "-fx-border-width:2;" +
                                 "-fx-font-size:28;" +
                                 "-fx-font-weight:bold;" +
-                                "-fx-text-fill:" + (themeDropdown.getValue().equals("Light") ? "black" : "white") + ";"
+                                "-fx-text-fill:" +
+                                (themeDropdown.getValue().equals("Light") ? "black" : "white") +
+                                ";"
                 );
             }
         }
@@ -181,6 +317,7 @@ public class PuckleController {
     private void applyTheme(String theme) {
 
         Scene scene = rootPane.getScene();
+
         if (scene == null) return;
 
         scene.getStylesheets().clear();
@@ -188,55 +325,80 @@ public class PuckleController {
         switch (theme) {
 
             case "Fuschia":
-                scene.getStylesheets().add(getClass().getResource("/styles/fuschia.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/fuschia.css").toExternalForm()
+                );
                 break;
 
             case "Willow":
-                scene.getStylesheets().add(getClass().getResource("/styles/willow.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/willow.css").toExternalForm()
+                );
                 break;
 
             case "Coach":
-                scene.getStylesheets().add(getClass().getResource("/styles/coach.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/coach.css").toExternalForm()
+                );
                 break;
 
             case "Ocean":
-                scene.getStylesheets().add(getClass().getResource("/styles/Ocean.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Ocean.css").toExternalForm()
+                );
                 break;
 
             case "Raven":
-                scene.getStylesheets().add(getClass().getResource("/styles/Raven.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Raven.css").toExternalForm()
+                );
                 break;
 
             case "Bell":
-                scene.getStylesheets().add(getClass().getResource("/styles/Bell.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Bell.css").toExternalForm()
+                );
                 break;
 
             case "The Four":
-                scene.getStylesheets().add(getClass().getResource("/styles/Four.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Four.css").toExternalForm()
+                );
                 break;
 
             case "Storm":
-                scene.getStylesheets().add(getClass().getResource("/styles/Storm.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Storm.css").toExternalForm()
+                );
                 break;
 
             case "Orange":
-                scene.getStylesheets().add(getClass().getResource("/styles/Orange.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/Orange.css").toExternalForm()
+                );
                 break;
 
             case "Blue":
-                scene.getStylesheets().add(getClass().getResource("/styles/blue.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/blue.css").toExternalForm()
+                );
                 break;
 
             case "Dark":
-                scene.getStylesheets().add(getClass().getResource("/styles/dark.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/dark.css").toExternalForm()
+                );
                 break;
 
             case "Light":
-                scene.getStylesheets().add(getClass().getResource("/styles/light.css").toExternalForm());
+                scene.getStylesheets().add(
+                        getClass().getResource("/styles/light.css").toExternalForm()
+                );
                 break;
         }
 
         if (hasSubmitted) {
+
             forceAllTextWhite();
         }
     }
@@ -244,11 +406,13 @@ public class PuckleController {
     private void forceAllTextWhite() {
 
         for (int r = 0; r < 6; r++) {
+
             for (int c = 0; c < 5; c++) {
 
                 Label tile = board[r][c];
 
                 String style = tile.getStyle();
+
                 style = style.replaceAll("-fx-text-fill:[^;]+;", "");
 
                 tile.setStyle(style + "-fx-text-fill:white;");
@@ -261,24 +425,36 @@ public class PuckleController {
         Stage winStage = new Stage();
 
         Label winLabel = new Label("YOU WIN!");
-        winLabel.setStyle("-fx-font-family:'Bebas Neue';-fx-font-size:40;-fx-font-weight:bold;");
+
+        winLabel.setStyle(
+                "-fx-font-family:'Bebas Neue';" +
+                        "-fx-font-size:40;" +
+                        "-fx-font-weight:bold;"
+        );
 
         Button restartBtn = new Button("Restart");
+
         Button exitBtn = new Button("Exit");
 
         restartBtn.setOnAction(e -> {
+
             restartGame();
+
             winStage.close();
         });
 
         exitBtn.setOnAction(e -> System.exit(0));
 
         VBox layout = new VBox(15, winLabel, restartBtn, exitBtn);
+
         layout.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(layout, 300, 200);
+
         winStage.setScene(scene);
+
         winStage.setTitle("Victory");
+
         winStage.show();
     }
 
@@ -287,28 +463,39 @@ public class PuckleController {
         Stage loseStage = new Stage();
 
         Label loseLabel = new Label("YOU LOSE!");
-        loseLabel.setStyle("-fx-font-family:'Bebas Neue';-fx-font-size:40;-fx-font-weight:bold;");
+
+        loseLabel.setStyle(
+                "-fx-font-family:'Bebas Neue';" +
+                        "-fx-font-size:40;" +
+                        "-fx-font-weight:bold;"
+        );
 
         Button restartBtn = new Button("Restart");
+
         Button exitBtn = new Button("Exit");
 
         restartBtn.setOnAction(e -> {
+
             restartGame();
+
             loseStage.close();
         });
 
         exitBtn.setOnAction(e -> System.exit(0));
 
         VBox layout = new VBox(15, loseLabel, restartBtn, exitBtn);
+
         layout.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(layout, 300, 200);
+
         loseStage.setScene(scene);
+
         loseStage.setTitle("Game Over");
+
         loseStage.show();
     }
 
-    // ---------------- KEYBOARD BUTTONS ----------------
     @FXML private void handleQ() { addLetter("Q"); }
     @FXML private void handleW() { addLetter("W"); }
     @FXML private void handleE() { addLetter("E"); }
