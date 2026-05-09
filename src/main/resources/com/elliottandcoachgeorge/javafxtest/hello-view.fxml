@@ -14,7 +14,6 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.elliottandcoachgeorge.javafxtest.PuckleController">
 
-
     <center>
 
         <VBox alignment="TOP_CENTER"
