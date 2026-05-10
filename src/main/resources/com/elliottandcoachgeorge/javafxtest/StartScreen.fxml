@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox fx:id="rootVBox"
+      alignment="CENTER" spacing="30"
+      prefHeight="600" prefWidth="500"
+      style="-fx-background-color:black;"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <padding>
+        <Insets top="80" bottom="80" left="60" right="60"/>
+    </padding>
+
+    <Label fx:id="titleLabel"
+           text="RAHK EM'"
+           style="-fx-font-size:64; -fx-font-weight:bold; -fx-text-fill:white;"/>
+
+    <ComboBox fx:id="themeDropdown"
+              prefWidth="220"
+              promptText="Select Theme">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Dark"/>
+                <String fx:value="Light"/>
+                <String fx:value="Blue"/>
+                <String fx:value="Ocean"/>
+                <String fx:value="Raven"/>
+                <String fx:value="Coach"/>
+                <String fx:value="Willow"/>
+                <String fx:value="Fuschia"/>
+                <String fx:value="Bell"/>
+                <String fx:value="The Four"/>
+                <String fx:value="Storm"/>
+                <String fx:value="Orange"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+
+    <ComboBox fx:id="difficultyDropdown"
+              prefWidth="220"
+              promptText="Select Difficulty">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Baby"/>
+                <String fx:value="Easy"/>
+                <String fx:value="Medium"/>
+                <String fx:value="Hard"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+
+    <Button fx:id="freePlayButton"
+            text="FREE PLAY"
+            prefWidth="220" prefHeight="60"
+            onAction="#startFreePlay"
+            style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
+
+    <Button fx:id="dailyButton"
+            text="DAILY CHALLENGE"
+            prefWidth="220" prefHeight="60"
+            onAction="#startDailyChallenge"
+            style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
+
+</VBox>

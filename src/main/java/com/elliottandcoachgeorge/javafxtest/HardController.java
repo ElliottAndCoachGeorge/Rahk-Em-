@@ -27,17 +27,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
-public class PuckleController {
+public class HardController {
 
     // =========================================================
-    // GRID LABELS
+    // GRID LABELS — 6 columns, 6 rows
     // =========================================================
-    @FXML private Label r0c0; @FXML private Label r0c1; @FXML private Label r0c2; @FXML private Label r0c3; @FXML private Label r0c4;
-    @FXML private Label r1c0; @FXML private Label r1c1; @FXML private Label r1c2; @FXML private Label r1c3; @FXML private Label r1c4;
-    @FXML private Label r2c0; @FXML private Label r2c1; @FXML private Label r2c2; @FXML private Label r2c3; @FXML private Label r2c4;
-    @FXML private Label r3c0; @FXML private Label r3c1; @FXML private Label r3c2; @FXML private Label r3c3; @FXML private Label r3c4;
-    @FXML private Label r4c0; @FXML private Label r4c1; @FXML private Label r4c2; @FXML private Label r4c3; @FXML private Label r4c4;
-    @FXML private Label r5c0; @FXML private Label r5c1; @FXML private Label r5c2; @FXML private Label r5c3; @FXML private Label r5c4;
+    @FXML private Label r0c0; @FXML private Label r0c1; @FXML private Label r0c2; @FXML private Label r0c3; @FXML private Label r0c4; @FXML private Label r0c5;
+    @FXML private Label r1c0; @FXML private Label r1c1; @FXML private Label r1c2; @FXML private Label r1c3; @FXML private Label r1c4; @FXML private Label r1c5;
+    @FXML private Label r2c0; @FXML private Label r2c1; @FXML private Label r2c2; @FXML private Label r2c3; @FXML private Label r2c4; @FXML private Label r2c5;
+    @FXML private Label r3c0; @FXML private Label r3c1; @FXML private Label r3c2; @FXML private Label r3c3; @FXML private Label r3c4; @FXML private Label r3c5;
+    @FXML private Label r4c0; @FXML private Label r4c1; @FXML private Label r4c2; @FXML private Label r4c3; @FXML private Label r4c4; @FXML private Label r4c5;
+    @FXML private Label r5c0; @FXML private Label r5c1; @FXML private Label r5c2; @FXML private Label r5c3; @FXML private Label r5c4; @FXML private Label r5c5;
 
     // =========================================================
     // KEYBOARD BUTTONS
@@ -67,6 +67,9 @@ public class PuckleController {
     // =========================================================
     // GAME VARIABLES
     // =========================================================
+    private static final int WORD_LENGTH = 6;
+    private static final int MAX_ROWS = 6;
+
     private Label[][] board;
     private final HashMap<String, Button> keyboardMap = new HashMap<>();
     private int currentRow = 0;
@@ -74,7 +77,6 @@ public class PuckleController {
     private String[] WORDS;
     private final HashSet<String> dictionary = new HashSet<>();
     private String targetWord;
-    private boolean hasSubmitted = false;
     private GameMode gameMode = GameMode.FREE_PLAY;
     private Runnable backCallback;
     private String currentTheme = "Dark";
@@ -108,12 +110,12 @@ public class PuckleController {
     @FXML
     public void initialize() {
         board = new Label[][]{
-                {r0c0, r0c1, r0c2, r0c3, r0c4},
-                {r1c0, r1c1, r1c2, r1c3, r1c4},
-                {r2c0, r2c1, r2c2, r2c3, r2c4},
-                {r3c0, r3c1, r3c2, r3c3, r3c4},
-                {r4c0, r4c1, r4c2, r4c3, r4c4},
-                {r5c0, r5c1, r5c2, r5c3, r5c4}
+                {r0c0, r0c1, r0c2, r0c3, r0c4, r0c5},
+                {r1c0, r1c1, r1c2, r1c3, r1c4, r1c5},
+                {r2c0, r2c1, r2c2, r2c3, r2c4, r2c5},
+                {r3c0, r3c1, r3c2, r3c3, r3c4, r3c5},
+                {r4c0, r4c1, r4c2, r4c3, r4c4, r4c5},
+                {r5c0, r5c1, r5c2, r5c3, r5c4, r5c5}
         };
 
         setupKeyboardMap();
@@ -128,12 +130,8 @@ public class PuckleController {
 
         rootPane.addEventFilter(KeyEvent.KEY_TYPED, this::handleKeyTyped);
         rootPane.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ENTER) {
-                submitGuess();
-            }
-            if (e.getCode() == KeyCode.BACK_SPACE) {
-                deleteLetter();
-            }
+            if (e.getCode() == KeyCode.ENTER) submitGuess();
+            if (e.getCode() == KeyCode.BACK_SPACE) deleteLetter();
         });
 
         rootPane.setFocusTraversable(true);
@@ -144,42 +142,25 @@ public class PuckleController {
     // KEYBOARD MAP
     // =========================================================
     private void setupKeyboardMap() {
-        keyboardMap.put("Q", qButton);
-        keyboardMap.put("W", wButton);
-        keyboardMap.put("E", eButton);
-        keyboardMap.put("R", rButton);
-        keyboardMap.put("T", tButton);
-        keyboardMap.put("Y", yButton);
-        keyboardMap.put("U", uButton);
-        keyboardMap.put("I", iButton);
-        keyboardMap.put("O", oButton);
-        keyboardMap.put("P", pButton);
-        keyboardMap.put("A", aButton);
-        keyboardMap.put("S", sButton);
-        keyboardMap.put("D", dButton);
-        keyboardMap.put("F", fButton);
-        keyboardMap.put("G", gButton);
-        keyboardMap.put("H", hButton);
-        keyboardMap.put("J", jButton);
-        keyboardMap.put("K", kButton);
-        keyboardMap.put("L", lButton);
-        keyboardMap.put("Z", zButton);
-        keyboardMap.put("X", xButton);
-        keyboardMap.put("C", cButton);
-        keyboardMap.put("V", vButton);
-        keyboardMap.put("B", bButton);
-        keyboardMap.put("N", nButton);
-        keyboardMap.put("M", mButton);
+        keyboardMap.put("Q", qButton); keyboardMap.put("W", wButton); keyboardMap.put("E", eButton);
+        keyboardMap.put("R", rButton); keyboardMap.put("T", tButton); keyboardMap.put("Y", yButton);
+        keyboardMap.put("U", uButton); keyboardMap.put("I", iButton); keyboardMap.put("O", oButton);
+        keyboardMap.put("P", pButton); keyboardMap.put("A", aButton); keyboardMap.put("S", sButton);
+        keyboardMap.put("D", dButton); keyboardMap.put("F", fButton); keyboardMap.put("G", gButton);
+        keyboardMap.put("H", hButton); keyboardMap.put("J", jButton); keyboardMap.put("K", kButton);
+        keyboardMap.put("L", lButton); keyboardMap.put("Z", zButton); keyboardMap.put("X", xButton);
+        keyboardMap.put("C", cButton); keyboardMap.put("V", vButton); keyboardMap.put("B", bButton);
+        keyboardMap.put("N", nButton); keyboardMap.put("M", mButton);
     }
 
     // =========================================================
-    // BOARD STYLE — no borders
+    // BOARD STYLE
     // =========================================================
     private void setupBoardStyle() {
         if (board == null) return;
         String backgroundColor = getThemeTileColor();
-        for (int r = 0; r < 6; r++) {
-            for (int c = 0; c < 5; c++) {
+        for (int r = 0; r < MAX_ROWS; r++) {
+            for (int c = 0; c < WORD_LENGTH; c++) {
                 board[r][c].setStyle(
                         "-fx-background-color:" + backgroundColor + ";" +
                                 "-fx-background-radius:6;" +
@@ -216,9 +197,7 @@ public class PuckleController {
     // =========================================================
     @FXML
     private void handleBack() {
-        if (backCallback != null) {
-            backCallback.run();
-        }
+        if (backCallback != null) backCallback.run();
     }
 
     // =========================================================
@@ -227,16 +206,16 @@ public class PuckleController {
     private void loadWords() {
         ArrayList<String> wordList = new ArrayList<>();
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/words.txt");
+            InputStream inputStream = getClass().getResourceAsStream("/hard.txt");
             if (inputStream == null) {
-                wordList.add("LUCAS");
-                dictionary.add("LUCAS");
+                wordList.add("PLANET");
+                dictionary.add("PLANET");
             } else {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     line = line.trim().toUpperCase();
-                    if (line.length() == 5) {
+                    if (line.length() == WORD_LENGTH) {
                         wordList.add(line);
                         dictionary.add(line);
                     }
@@ -245,8 +224,8 @@ public class PuckleController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            wordList.add("LUCAS");
-            dictionary.add("LUCAS");
+            wordList.add("PLANET");
+            dictionary.add("PLANET");
         }
         WORDS = wordList.toArray(new String[0]);
     }
@@ -255,20 +234,15 @@ public class PuckleController {
     // WORD SELECTION
     // =========================================================
     private String getRandomWord() {
-        if (WORDS == null || WORDS.length == 0) {
-            return "LUCAS";
-        }
+        if (WORDS == null || WORDS.length == 0) return "PLANET";
         return WORDS[new Random().nextInt(WORDS.length)];
     }
 
     private String getDailyWord() {
-        if (WORDS == null || WORDS.length == 0) {
-            return "LUCAS";
-        }
+        if (WORDS == null || WORDS.length == 0) return "PLANET";
         LocalDate start = LocalDate.of(2024, 1, 1);
         long days = ChronoUnit.DAYS.between(start, LocalDate.now());
-        int index = (int) (Math.abs(days) % WORDS.length);
-        return WORDS[index];
+        return WORDS[(int) (Math.abs(days) % WORDS.length)];
     }
 
     // =========================================================
@@ -276,15 +250,12 @@ public class PuckleController {
     // =========================================================
     private void handleKeyTyped(KeyEvent event) {
         String character = event.getCharacter().toUpperCase();
-        if (!character.matches("[A-Z]")) {
-            event.consume();
-            return;
-        }
+        if (!character.matches("[A-Z]")) { event.consume(); return; }
         addLetter(character);
     }
 
     private void addLetter(String letter) {
-        if (currentCol < 5) {
+        if (currentCol < WORD_LENGTH) {
             Label tile = board[currentRow][currentCol];
             tile.setText(letter);
             playPopAnimation(tile);
@@ -300,9 +271,7 @@ public class PuckleController {
     }
 
     private void clearRow() {
-        for (int i = 0; i < 5; i++) {
-            board[currentRow][i].setText("");
-        }
+        for (int i = 0; i < WORD_LENGTH; i++) board[currentRow][i].setText("");
         currentCol = 0;
     }
 
@@ -311,10 +280,8 @@ public class PuckleController {
     // =========================================================
     private void playPopAnimation(Label tile) {
         ScaleTransition pop = new ScaleTransition(Duration.millis(100), tile);
-        pop.setFromX(1.0);
-        pop.setFromY(1.0);
-        pop.setToX(1.15);
-        pop.setToY(1.15);
+        pop.setFromX(1.0); pop.setFromY(1.0);
+        pop.setToX(1.15);  pop.setToY(1.15);
         pop.setAutoReverse(true);
         pop.setCycleCount(2);
         pop.play();
@@ -325,24 +292,16 @@ public class PuckleController {
     // =========================================================
     private void shakeRow(int row) {
         SequentialTransition sequence = new SequentialTransition();
-
-        for (int c = 0; c < 5; c++) {
+        for (int c = 0; c < WORD_LENGTH; c++) {
             Label tile = board[row][c];
-
-            TranslateTransition bounceUp = new TranslateTransition(Duration.millis(80), tile);
+            TranslateTransition bounceUp   = new TranslateTransition(Duration.millis(80), tile);
             bounceUp.setByY(-18);
-
             TranslateTransition bounceDown = new TranslateTransition(Duration.millis(80), tile);
             bounceDown.setByY(18);
-
             TranslateTransition returnHome = new TranslateTransition(Duration.millis(80), tile);
-            returnHome.setByY(0);
-            returnHome.setToY(0);
-
-            SequentialTransition tileBounce = new SequentialTransition(bounceUp, bounceDown, returnHome);
-            sequence.getChildren().add(tileBounce);
+            returnHome.setByY(0); returnHome.setToY(0);
+            sequence.getChildren().add(new SequentialTransition(bounceUp, bounceDown, returnHome));
         }
-
         sequence.play();
     }
 
@@ -350,14 +309,10 @@ public class PuckleController {
     // SUBMIT GUESS
     // =========================================================
     private void submitGuess() {
-        if (currentCol < 5) {
-            return;
-        }
+        if (currentCol < WORD_LENGTH) return;
 
         StringBuilder guessBuilder = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
-            guessBuilder.append(board[currentRow][i].getText());
-        }
+        for (int i = 0; i < WORD_LENGTH; i++) guessBuilder.append(board[currentRow][i].getText());
         String guess = guessBuilder.toString();
 
         if (!dictionary.contains(guess)) {
@@ -365,12 +320,11 @@ public class PuckleController {
             return;
         }
 
-        hasSubmitted = true;
-        boolean[] used = new boolean[5];
+        boolean[] used = new boolean[WORD_LENGTH];
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < WORD_LENGTH; i++) {
             Label tile = board[currentRow][i];
-            String guessLetter = guess.substring(i, i + 1);
+            String guessLetter  = guess.substring(i, i + 1);
             String targetLetter = targetWord.substring(i, i + 1);
             final int index = i;
 
@@ -387,22 +341,14 @@ public class PuckleController {
                         updateKeyboardColor(guessLetter, "green");
                     } else {
                         boolean found = false;
-                        for (int j = 0; j < 5; j++) {
+                        for (int j = 0; j < WORD_LENGTH; j++) {
                             if (!used[j] && guessLetter.equals(targetWord.substring(j, j + 1))) {
-                                used[j] = true;
-                                found = true;
-                                break;
+                                used[j] = true; found = true; break;
                             }
                         }
-                        if (found) {
-                            setTileYellow(tile);
-                            updateKeyboardColor(guessLetter, "yellow");
-                        } else {
-                            setTileGray(tile);
-                            updateKeyboardColor(guessLetter, "gray");
-                        }
+                        if (found) { setTileYellow(tile); updateKeyboardColor(guessLetter, "yellow"); }
+                        else       { setTileGray(tile);   updateKeyboardColor(guessLetter, "gray"); }
                     }
-
                     RotateTransition finishFlip = new RotateTransition(Duration.millis(300), tile);
                     finishFlip.setAxis(Rotate.X_AXIS);
                     finishFlip.setFromAngle(90);
@@ -414,55 +360,30 @@ public class PuckleController {
             delay.play();
         }
 
-        PauseTransition end = new PauseTransition(Duration.millis(1600));
+        PauseTransition end = new PauseTransition(Duration.millis(WORD_LENGTH * 250 + 350));
         end.setOnFinished(e -> {
             if (guess.equals(targetWord)) {
                 showWinWindow();
             } else {
                 currentRow++;
                 currentCol = 0;
-                if (currentRow >= 6) {
-                    showLoseWindow();
-                }
+                if (currentRow >= MAX_ROWS) showLoseWindow();
             }
         });
         end.play();
     }
 
     // =========================================================
-    // TILE COLORS — no borders
+    // TILE COLORS
     // =========================================================
     private void setTileGreen(Label tile) {
-        tile.setStyle(
-                "-fx-background-color:#6aaa64;" +
-                        "-fx-background-radius:6;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-font-size:34;" +
-                        "-fx-font-family:'Arial';" +
-                        "-fx-font-weight:bold;"
-        );
+        tile.setStyle("-fx-background-color:#6aaa64;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
-
     private void setTileYellow(Label tile) {
-        tile.setStyle(
-                "-fx-background-color:#c9b458;" +
-                        "-fx-background-radius:6;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-font-size:34;" +
-                        "-fx-font-family:'Arial';" +
-                        "-fx-font-weight:bold;"
-        );
+        tile.setStyle("-fx-background-color:#c9b458;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
-
     private void setTileGray(Label tile) {
-        tile.setStyle(
-                "-fx-background-color:#787c7e;" +
-                        "-fx-background-radius:6;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-font-size:34;" +
-                        "-fx-font-family:'Arial';" +
-                        "-fx-font-weight:bold;"
-        );
+        tile.setStyle("-fx-background-color:#787c7e;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
 
     // =========================================================
@@ -470,38 +391,14 @@ public class PuckleController {
     // =========================================================
     private void updateKeyboardColor(String letter, String color) {
         Button key = keyboardMap.get(letter);
-        if (key == null) {
-            return;
-        }
+        if (key == null) return;
         String current = key.getStyle();
-        if (current.contains("#6aaa64")) {
-            return;
-        }
-        if (current.contains("#c9b458") && color.equals("gray")) {
-            return;
-        }
+        if (current.contains("#6aaa64")) return;
+        if (current.contains("#c9b458") && color.equals("gray")) return;
         switch (color) {
-            case "green":
-                key.setStyle(
-                        "-fx-background-color:#6aaa64;" +
-                                "-fx-text-fill:white;" +
-                                "-fx-font-weight:bold;"
-                );
-                break;
-            case "yellow":
-                key.setStyle(
-                        "-fx-background-color:#c9b458;" +
-                                "-fx-text-fill:white;" +
-                                "-fx-font-weight:bold;"
-                );
-                break;
-            case "gray":
-                key.setStyle(
-                        "-fx-background-color:#787c7e;" +
-                                "-fx-text-fill:white;" +
-                                "-fx-font-weight:bold;"
-                );
-                break;
+            case "green":  key.setStyle("-fx-background-color:#6aaa64;-fx-text-fill:white;-fx-font-weight:bold;"); break;
+            case "yellow": key.setStyle("-fx-background-color:#c9b458;-fx-text-fill:white;-fx-font-weight:bold;"); break;
+            case "gray":   key.setStyle("-fx-background-color:#787c7e;-fx-text-fill:white;-fx-font-weight:bold;"); break;
         }
     }
 
@@ -511,20 +408,12 @@ public class PuckleController {
     private void restartGame() {
         currentRow = 0;
         currentCol = 0;
-        if (gameMode == GameMode.FREE_PLAY) {
-            targetWord = getRandomWord();
-        } else {
-            targetWord = getDailyWord();
-        }
+        targetWord = (gameMode == GameMode.FREE_PLAY) ? getRandomWord() : getDailyWord();
         setupBoardStyle();
-        for (Button button : keyboardMap.values()) {
-            button.setStyle("");
-        }
-        for (int r = 0; r < 6; r++) {
-            for (int c = 0; c < 5; c++) {
+        for (Button button : keyboardMap.values()) button.setStyle("");
+        for (int r = 0; r < MAX_ROWS; r++)
+            for (int c = 0; c < WORD_LENGTH; c++)
                 board[r][c].setText("");
-            }
-        }
         rootPane.requestFocus();
     }
 
@@ -534,9 +423,7 @@ public class PuckleController {
     private void applyTheme(String theme) {
         currentTheme = theme;
         Scene scene = rootPane.getScene();
-        if (scene == null) {
-            return;
-        }
+        if (scene == null) return;
         scene.getStylesheets().clear();
         setupBoardStyle();
     }
@@ -546,116 +433,44 @@ public class PuckleController {
     // =========================================================
     private void showWinWindow() {
         Stage winStage = new Stage();
-
         Label winLabel = new Label("YOU WIN!");
-        winLabel.setStyle(
-                "-fx-font-size:48;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-text-fill:white;"
-        );
-
-        Label wordLabel = new Label("The word was: " + targetWord);
-        wordLabel.setStyle(
-                "-fx-font-size:22;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-text-fill:#6aaa64;" +
-                        "-fx-background-color:#2f2f2f;" +
-                        "-fx-padding:14 28 14 28;" +
-                        "-fx-background-radius:8;"
-        );
-
+        winLabel.setStyle("-fx-font-size:48;-fx-font-weight:bold;-fx-text-fill:white;");
+        Label wordLabel = new Label(targetWord);
+        wordLabel.setStyle("-fx-font-size:22;-fx-font-weight:bold;-fx-text-fill:#6aaa64;-fx-background-color:#2f2f2f;-fx-padding:14 28 14 28;-fx-background-radius:8;");
         Button restartBtn = new Button("RESTART");
-        restartBtn.setStyle(
-                "-fx-font-size:16;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-background-color:#444444;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-padding:10 24 10 24;" +
-                        "-fx-background-radius:6;"
-        );
-        restartBtn.setOnAction(e -> {
-            restartGame();
-            winStage.close();
-        });
-
+        restartBtn.setStyle("-fx-font-size:16;-fx-font-weight:bold;-fx-background-color:#444444;-fx-text-fill:white;-fx-padding:10 24 10 24;-fx-background-radius:6;");
+        restartBtn.setOnAction(e -> { restartGame(); winStage.close(); });
         Button exitBtn = new Button("EXIT");
-        exitBtn.setStyle(
-                "-fx-font-size:16;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-background-color:#444444;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-padding:10 24 10 24;" +
-                        "-fx-background-radius:6;"
-        );
+        exitBtn.setStyle("-fx-font-size:16;-fx-font-weight:bold;-fx-background-color:#444444;-fx-text-fill:white;-fx-padding:10 24 10 24;-fx-background-radius:6;");
         exitBtn.setOnAction(e -> System.exit(0));
-
         HBox buttonBox = new HBox(16, restartBtn, exitBtn);
         buttonBox.setAlignment(Pos.CENTER);
-
         VBox layout = new VBox(24, winLabel, wordLabel, buttonBox);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color:black; -fx-padding:40;");
-
-        Scene scene = new Scene(layout, 340, 260);
-        winStage.setScene(scene);
+        layout.setStyle("-fx-background-color:black;-fx-padding:40;");
+        winStage.setScene(new Scene(layout, 340, 260));
         winStage.setTitle("You Win!");
         winStage.show();
     }
 
     private void showLoseWindow() {
         Stage loseStage = new Stage();
-
         Label loseLabel = new Label("YOU LOSE!");
-        loseLabel.setStyle(
-                "-fx-font-size:48;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-text-fill:white;"
-        );
-
-        Label wordLabel = new Label("The word was: " + targetWord);
-        wordLabel.setStyle(
-                "-fx-font-size:22;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-text-fill:#cc3333;" +
-                        "-fx-background-color:#2f2f2f;" +
-                        "-fx-padding:14 28 14 28;" +
-                        "-fx-background-radius:8;"
-        );
-
+        loseLabel.setStyle("-fx-font-size:48;-fx-font-weight:bold;-fx-text-fill:white;");
+        Label wordLabel = new Label(targetWord);
+        wordLabel.setStyle("-fx-font-size:22;-fx-font-weight:bold;-fx-text-fill:#cc3333;-fx-background-color:#2f2f2f;-fx-padding:14 28 14 28;-fx-background-radius:8;");
         Button restartBtn = new Button("RESTART");
-        restartBtn.setStyle(
-                "-fx-font-size:16;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-background-color:#444444;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-padding:10 24 10 24;" +
-                        "-fx-background-radius:6;"
-        );
-        restartBtn.setOnAction(e -> {
-            restartGame();
-            loseStage.close();
-        });
-
+        restartBtn.setStyle("-fx-font-size:16;-fx-font-weight:bold;-fx-background-color:#444444;-fx-text-fill:white;-fx-padding:10 24 10 24;-fx-background-radius:6;");
+        restartBtn.setOnAction(e -> { restartGame(); loseStage.close(); });
         Button exitBtn = new Button("EXIT");
-        exitBtn.setStyle(
-                "-fx-font-size:16;" +
-                        "-fx-font-weight:bold;" +
-                        "-fx-background-color:#444444;" +
-                        "-fx-text-fill:white;" +
-                        "-fx-padding:10 24 10 24;" +
-                        "-fx-background-radius:6;"
-        );
+        exitBtn.setStyle("-fx-font-size:16;-fx-font-weight:bold;-fx-background-color:#444444;-fx-text-fill:white;-fx-padding:10 24 10 24;-fx-background-radius:6;");
         exitBtn.setOnAction(e -> System.exit(0));
-
         HBox buttonBox = new HBox(16, restartBtn, exitBtn);
         buttonBox.setAlignment(Pos.CENTER);
-
         VBox layout = new VBox(24, loseLabel, wordLabel, buttonBox);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-background-color:black; -fx-padding:40;");
-
-        Scene scene = new Scene(layout, 340, 260);
-        loseStage.setScene(scene);
+        layout.setStyle("-fx-background-color:black;-fx-padding:40;");
+        loseStage.setScene(new Scene(layout, 340, 260));
         loseStage.setTitle("You Lose!");
         loseStage.show();
     }
