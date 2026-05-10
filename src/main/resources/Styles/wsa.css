@@ -1,0 +1,42 @@
+.root {
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-background-color: #0a1a5c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.button:hover {
+    -fx-background-color: #162680;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.combo-box {
+    -fx-background-color: #0a1a5c;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #0a1a5c;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #0a1a5c;
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #0a1a5c;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #162680;
+}

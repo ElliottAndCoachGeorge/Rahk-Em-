@@ -1,5 +1,6 @@
-package com.elliottandcoachgeorge.javafxtest;
+package com.elliottandcoachgeorge.javafxtest.Controllers;
 
+import com.elliottandcoachgeorge.javafxtest.GameMode;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -27,17 +28,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
-public class EasyController {
+public class HardController {
 
     // =========================================================
-    // GRID LABELS — 4 columns, 6 rows
+    // GRID LABELS — 6 columns, 6 rows
     // =========================================================
-    @FXML private Label r0c0; @FXML private Label r0c1; @FXML private Label r0c2; @FXML private Label r0c3;
-    @FXML private Label r1c0; @FXML private Label r1c1; @FXML private Label r1c2; @FXML private Label r1c3;
-    @FXML private Label r2c0; @FXML private Label r2c1; @FXML private Label r2c2; @FXML private Label r2c3;
-    @FXML private Label r3c0; @FXML private Label r3c1; @FXML private Label r3c2; @FXML private Label r3c3;
-    @FXML private Label r4c0; @FXML private Label r4c1; @FXML private Label r4c2; @FXML private Label r4c3;
-    @FXML private Label r5c0; @FXML private Label r5c1; @FXML private Label r5c2; @FXML private Label r5c3;
+    @FXML private Label r0c0; @FXML private Label r0c1; @FXML private Label r0c2; @FXML private Label r0c3; @FXML private Label r0c4; @FXML private Label r0c5;
+    @FXML private Label r1c0; @FXML private Label r1c1; @FXML private Label r1c2; @FXML private Label r1c3; @FXML private Label r1c4; @FXML private Label r1c5;
+    @FXML private Label r2c0; @FXML private Label r2c1; @FXML private Label r2c2; @FXML private Label r2c3; @FXML private Label r2c4; @FXML private Label r2c5;
+    @FXML private Label r3c0; @FXML private Label r3c1; @FXML private Label r3c2; @FXML private Label r3c3; @FXML private Label r3c4; @FXML private Label r3c5;
+    @FXML private Label r4c0; @FXML private Label r4c1; @FXML private Label r4c2; @FXML private Label r4c3; @FXML private Label r4c4; @FXML private Label r4c5;
+    @FXML private Label r5c0; @FXML private Label r5c1; @FXML private Label r5c2; @FXML private Label r5c3; @FXML private Label r5c4; @FXML private Label r5c5;
 
     // =========================================================
     // KEYBOARD BUTTONS
@@ -67,7 +68,7 @@ public class EasyController {
     // =========================================================
     // GAME VARIABLES
     // =========================================================
-    private static final int WORD_LENGTH = 4;
+    private static final int WORD_LENGTH = 6;
     private static final int MAX_ROWS = 6;
 
     private Label[][] board;
@@ -110,12 +111,12 @@ public class EasyController {
     @FXML
     public void initialize() {
         board = new Label[][]{
-                {r0c0, r0c1, r0c2, r0c3},
-                {r1c0, r1c1, r1c2, r1c3},
-                {r2c0, r2c1, r2c2, r2c3},
-                {r3c0, r3c1, r3c2, r3c3},
-                {r4c0, r4c1, r4c2, r4c3},
-                {r5c0, r5c1, r5c2, r5c3}
+                {r0c0, r0c1, r0c2, r0c3, r0c4, r0c5},
+                {r1c0, r1c1, r1c2, r1c3, r1c4, r1c5},
+                {r2c0, r2c1, r2c2, r2c3, r2c4, r2c5},
+                {r3c0, r3c1, r3c2, r3c3, r3c4, r3c5},
+                {r4c0, r4c1, r4c2, r4c3, r4c4, r4c5},
+                {r5c0, r5c1, r5c2, r5c3, r5c4, r5c5}
         };
 
         setupKeyboardMap();
@@ -176,6 +177,7 @@ public class EasyController {
 
     private String getThemeTileColor() {
         switch (currentTheme) {
+            case "WSA": return "#0a1a5c";
             case "Dark":     return "#2f2f2f";
             case "Light":    return "#d3d6da";
             case "Blue":     return "#4d79ff";
@@ -206,10 +208,10 @@ public class EasyController {
     private void loadWords() {
         ArrayList<String> wordList = new ArrayList<>();
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/easy.txt");
+            InputStream inputStream = getClass().getResourceAsStream("/hard.txt");
             if (inputStream == null) {
-                wordList.add("FISH");
-                dictionary.add("FISH");
+                wordList.add("PLANET");
+                dictionary.add("PLANET");
             } else {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
@@ -224,8 +226,8 @@ public class EasyController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            wordList.add("FISH");
-            dictionary.add("FISH");
+            wordList.add("PLANET");
+            dictionary.add("PLANET");
         }
         WORDS = wordList.toArray(new String[0]);
     }
@@ -234,12 +236,12 @@ public class EasyController {
     // WORD SELECTION
     // =========================================================
     private String getRandomWord() {
-        if (WORDS == null || WORDS.length == 0) return "FISH";
+        if (WORDS == null || WORDS.length == 0) return "PLANET";
         return WORDS[new Random().nextInt(WORDS.length)];
     }
 
     private String getDailyWord() {
-        if (WORDS == null || WORDS.length == 0) return "FISH";
+        if (WORDS == null || WORDS.length == 0) return "PLANET";
         LocalDate start = LocalDate.of(2024, 1, 1);
         long days = ChronoUnit.DAYS.between(start, LocalDate.now());
         return WORDS[(int) (Math.abs(days) % WORDS.length)];
@@ -427,7 +429,22 @@ public class EasyController {
         scene.getStylesheets().clear();
         setupBoardStyle();
     }
-
+    // =========================================================
+    // SUBJECT / IMAGE
+    // =========================================================
+    public void setSubject(String subject) {
+        if (logoImage == null) return;
+        String imageName = subject.toLowerCase() + ".png";
+        try {
+            javafx.scene.image.Image img = new javafx.scene.image.Image(
+                    getClass().getResourceAsStream("/Images/" + imageName)
+            );
+            logoImage.setImage(img);
+        } catch (Exception e) {
+            // image not found — logo stays as default
+            System.out.println("Image not found: " + imageName);
+        }
+    }
     // =========================================================
     // WIN / LOSE
     // =========================================================

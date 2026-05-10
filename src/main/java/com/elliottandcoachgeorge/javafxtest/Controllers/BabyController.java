@@ -1,5 +1,6 @@
-package com.elliottandcoachgeorge.javafxtest;
+package com.elliottandcoachgeorge.javafxtest.Controllers;
 
+import com.elliottandcoachgeorge.javafxtest.GameMode;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -176,6 +177,7 @@ public class BabyController {
 
     private String getThemeTileColor() {
         switch (currentTheme) {
+            case "WSA": return "#0a1a5c";
             case "Dark":     return "#2f2f2f";
             case "Light":    return "#d3d6da";
             case "Blue":     return "#4d79ff";
@@ -427,7 +429,22 @@ public class BabyController {
         scene.getStylesheets().clear();
         setupBoardStyle();
     }
-
+    // =========================================================
+// SUBJECT / IMAGE
+// =========================================================
+    public void setSubject(String subject) {
+        if (logoImage == null) return;
+        String imageName = subject.toLowerCase() + ".png";
+        try {
+            javafx.scene.image.Image img = new javafx.scene.image.Image(
+                    getClass().getResourceAsStream("/Images/" + imageName)
+            );
+            logoImage.setImage(img);
+        } catch (Exception e) {
+            // image not found — logo stays as default
+            System.out.println("Image not found: " + imageName);
+        }
+    }
     // =========================================================
     // WIN / LOSE
     // =========================================================

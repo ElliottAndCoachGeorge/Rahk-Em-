@@ -2,20 +2,24 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 
 <VBox fx:id="rootVBox"
-      alignment="CENTER" spacing="30"
-      prefHeight="600" prefWidth="500"
+      alignment="CENTER" spacing="20"
+      prefHeight="700" prefWidth="500"
       style="-fx-background-color:black;"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1">
 
     <padding>
-        <Insets top="80" bottom="80" left="60" right="60"/>
+        <Insets top="30" bottom="40" left="60" right="60"/>
     </padding>
+
+    <!-- Carousel image slot -->
+    <ImageView fx:id="carouselImage" fitWidth="300" fitHeight="160" preserveRatio="true"/>
 
     <Label fx:id="titleLabel"
            text="RAHK EM'"
@@ -38,6 +42,12 @@
                 <String fx:value="The Four"/>
                 <String fx:value="Storm"/>
                 <String fx:value="Orange"/>
+                <String fx:value="Math"/>
+                <String fx:value="Compute"/>
+                <String fx:value="Geo"/>
+                <String fx:value="Science"/>
+                <String fx:value="Lit"/>
+                <String fx:value="WSA"/>
             </FXCollections>
         </items>
     </ComboBox>
@@ -51,6 +61,22 @@
                 <String fx:value="Easy"/>
                 <String fx:value="Medium"/>
                 <String fx:value="Hard"/>
+            </FXCollections>
+        </items>
+    </ComboBox>
+
+    <ComboBox fx:id="subjectDropdown"
+              prefWidth="220"
+              promptText="Select Subject">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Java"/>
+                <String fx:value="Lit"/>
+                <String fx:value="Geo"/>
+                <String fx:value="Math"/>
+                <String fx:value="Science"/>
+                <String fx:value="Compute"/>
+                <String fx:value="Latin"/>
             </FXCollections>
         </items>
     </ComboBox>

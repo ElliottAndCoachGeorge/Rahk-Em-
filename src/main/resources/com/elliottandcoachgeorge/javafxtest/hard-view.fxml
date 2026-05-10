@@ -8,7 +8,7 @@
 <BorderPane fx:id="rootPane" prefHeight="775.0" prefWidth="680.0"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.elliottandcoachgeorge.javafxtest.HardController">
+            fx:controller="com.elliottandcoachgeorge.javafxtest.Controllers.HardController">
 
     <center>
         <VBox alignment="TOP_CENTER" spacing="20">

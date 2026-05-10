@@ -2,7 +2,7 @@ package com.elliottandcoachgeorge.javafxtest;
 
 import java.util.*;
 
-public class PuckleEngine {
+public class RahkEmEngine {
 
     private static final String GREEN = "\u001b[42;1m";
     private static final String YELLOW = "\u001b[43;1m";
@@ -82,7 +82,7 @@ public class PuckleEngine {
 
     private String target;
 
-    public PuckleEngine() {
+    public RahkEmEngine() {
         target = WORDS[(int)(Math.random() * WORDS.length)];
     }
 
@@ -145,6 +145,6 @@ public class PuckleEngine {
     }
 
     public static void main(String[] args) {
-        new PuckleEngine().play();
+        new RahkEmEngine().play();
     }
 }

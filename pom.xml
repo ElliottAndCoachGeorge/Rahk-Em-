@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.elliottandcoachgeorge.javafxtest/com.elliottandcoachgeorge.javafxtest.HelloApplication
+                                com.elliottandcoachgeorge.javafxtest/com.elliottandcoachgeorge.javafxtest.RahkEmApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
