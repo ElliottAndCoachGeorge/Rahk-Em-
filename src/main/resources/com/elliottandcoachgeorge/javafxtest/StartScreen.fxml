@@ -2,95 +2,97 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 
 <VBox fx:id="rootVBox"
       alignment="CENTER" spacing="20"
-      prefHeight="700" prefWidth="500"
+      prefHeight="720" prefWidth="500"
       style="-fx-background-color:black;"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1">
 
-    <padding>
-        <Insets top="30" bottom="40" left="60" right="60"/>
-    </padding>
+    <!-- Carousel sits OUTSIDE the padding so it bleeds to both edges -->
+    <Canvas fx:id="carouselCanvas" width="500" height="150"/>
 
-    <!-- Carousel image slot -->
-    <ImageView fx:id="carouselImage" fitWidth="300" fitHeight="160" preserveRatio="true"/>
+    <VBox alignment="CENTER" spacing="20">
+        <padding>
+            <Insets top="0" bottom="30" left="60" right="60"/>
+        </padding>
 
-    <Label fx:id="titleLabel"
-           text="RAHK EM'"
-           style="-fx-font-size:64; -fx-font-weight:bold; -fx-text-fill:white;"/>
+        <Label fx:id="titleLabel"
+               text="RAHK EM'"
+               style="-fx-font-size:64; -fx-font-weight:bold; -fx-text-fill:white;"/>
 
-    <ComboBox fx:id="themeDropdown"
-              prefWidth="220"
-              promptText="Select Theme">
-        <items>
-            <FXCollections fx:factory="observableArrayList">
-                <String fx:value="Dark"/>
-                <String fx:value="Light"/>
-                <String fx:value="Blue"/>
-                <String fx:value="Ocean"/>
-                <String fx:value="Raven"/>
-                <String fx:value="Coach"/>
-                <String fx:value="Willow"/>
-                <String fx:value="Fuschia"/>
-                <String fx:value="Bell"/>
-                <String fx:value="The Four"/>
-                <String fx:value="Storm"/>
-                <String fx:value="Orange"/>
-                <String fx:value="Math"/>
-                <String fx:value="Compute"/>
-                <String fx:value="Geo"/>
-                <String fx:value="Science"/>
-                <String fx:value="Lit"/>
-                <String fx:value="WSA"/>
-            </FXCollections>
-        </items>
-    </ComboBox>
+        <ComboBox fx:id="themeDropdown"
+                  prefWidth="220"
+                  promptText="Select Theme">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="WSA"/>
+                    <String fx:value="Dark"/>
+                    <String fx:value="Light"/>
+                    <String fx:value="Blue"/>
+                    <String fx:value="Ocean"/>
+                    <String fx:value="Raven"/>
+                    <String fx:value="Coach"/>
+                    <String fx:value="Willow"/>
+                    <String fx:value="Fuschia"/>
+                    <String fx:value="Bell"/>
+                    <String fx:value="The Four"/>
+                    <String fx:value="Storm"/>
+                    <String fx:value="Orange"/>
+                    <String fx:value="Math"/>
+                    <String fx:value="Compute"/>
+                    <String fx:value="Geo"/>
+                    <String fx:value="Science"/>
+                    <String fx:value="Lit"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
 
-    <ComboBox fx:id="difficultyDropdown"
-              prefWidth="220"
-              promptText="Select Difficulty">
-        <items>
-            <FXCollections fx:factory="observableArrayList">
-                <String fx:value="Baby"/>
-                <String fx:value="Easy"/>
-                <String fx:value="Medium"/>
-                <String fx:value="Hard"/>
-            </FXCollections>
-        </items>
-    </ComboBox>
+        <ComboBox fx:id="difficultyDropdown"
+                  prefWidth="220"
+                  promptText="Select Difficulty">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Baby"/>
+                    <String fx:value="Easy"/>
+                    <String fx:value="Medium"/>
+                    <String fx:value="Hard"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
 
-    <ComboBox fx:id="subjectDropdown"
-              prefWidth="220"
-              promptText="Select Subject">
-        <items>
-            <FXCollections fx:factory="observableArrayList">
-                <String fx:value="Java"/>
-                <String fx:value="Lit"/>
-                <String fx:value="Geo"/>
-                <String fx:value="Math"/>
-                <String fx:value="Science"/>
-                <String fx:value="Compute"/>
-                <String fx:value="Latin"/>
-            </FXCollections>
-        </items>
-    </ComboBox>
+        <ComboBox fx:id="subjectDropdown"
+                  prefWidth="220"
+                  promptText="Select Subject">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Java"/>
+                    <String fx:value="Lit"/>
+                    <String fx:value="Geo"/>
+                    <String fx:value="Math"/>
+                    <String fx:value="Science"/>
+                    <String fx:value="Compute"/>
+                    <String fx:value="Latin"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
 
-    <Button fx:id="freePlayButton"
-            text="FREE PLAY"
-            prefWidth="220" prefHeight="60"
-            onAction="#startFreePlay"
-            style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
+        <Button fx:id="freePlayButton"
+                text="FREE PLAY"
+                prefWidth="220" prefHeight="60"
+                onAction="#startFreePlay"
+                style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
 
-    <Button fx:id="dailyButton"
-            text="DAILY CHALLENGE"
-            prefWidth="220" prefHeight="60"
-            onAction="#startDailyChallenge"
-            style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
+        <Button fx:id="dailyButton"
+                text="DAILY CHALLENGE"
+                prefWidth="220" prefHeight="60"
+                onAction="#startDailyChallenge"
+                style="-fx-font-size:18; -fx-font-weight:bold; -fx-background-radius:10;"/>
+    </VBox>
 
 </VBox>

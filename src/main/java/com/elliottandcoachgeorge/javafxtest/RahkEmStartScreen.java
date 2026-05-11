@@ -4,26 +4,27 @@ import com.elliottandcoachgeorge.javafxtest.Controllers.BabyController;
 import com.elliottandcoachgeorge.javafxtest.Controllers.EasyController;
 import com.elliottandcoachgeorge.javafxtest.Controllers.HardController;
 import com.elliottandcoachgeorge.javafxtest.Controllers.RahkEmController;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
+import javafx.animation.AnimationTimer;
 import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RahkEmStartScreen extends Application {
 
@@ -58,7 +59,7 @@ public class RahkEmStartScreen extends Application {
     @FXML private Button freePlayButton;
     @FXML private Button dailyButton;
     @FXML private VBox rootVBox;
-    @FXML private ImageView carouselImage;
+    @FXML private Canvas carouselCanvas;
 
     private final Stage stage;
 
@@ -68,8 +69,15 @@ public class RahkEmStartScreen extends Application {
     private final String[] CAROUSEL_IMAGES = {
             "java", "geo", "lit", "science", "math", "compute", "latin"
     };
-    private int carouselIndex = 0;
-    private Timeline carouselTimeline;
+
+    private final List<Image> carouselImgs  = new ArrayList<>();
+    private AnimationTimer     carouselTimer;
+    private double             carouselOffset = 0;
+
+    // height every image is scaled to — width scales proportionally
+    private static final double SLOT_HEIGHT = 130;
+    private static final double GAP         = 30;
+    private static final double SPEED       = 0.7;
 
     public RahkEmStartScreen(Stage stage) {
         this.stage = stage;
@@ -81,7 +89,7 @@ public class RahkEmStartScreen extends Application {
 
     @FXML
     private void initialize() {
-        themeDropdown.setValue("Dark");
+        themeDropdown.setValue("WSA");
         themeDropdown.setOnAction(e -> applyTheme(themeDropdown.getValue()));
         difficultyDropdown.setValue("Medium");
         subjectDropdown.setValue("Java");
@@ -91,42 +99,86 @@ public class RahkEmStartScreen extends Application {
         styleDropdown(subjectDropdown);
 
         startTitleAnimation();
+        loadCarouselImages();
         startCarousel();
-        applyTheme("Dark");
+        applyTheme("WSA");
     }
 
     // =========================================================
-    // IMAGE CAROUSEL
+    // CAROUSEL
     // =========================================================
+    private void loadCarouselImages() {
+        for (String name : CAROUSEL_IMAGES) {
+            try {
+                Image img = new Image(
+                        getClass().getResourceAsStream("/Images/" + name + ".png")
+                );
+                carouselImgs.add(img);
+            } catch (Exception e) {
+                System.out.println("Could not load: " + name + ".png");
+            }
+        }
+    }
+
+    // Compute the display width of image i, preserving its aspect ratio
+    private double slotWidth(int i) {
+        if (i < 0 || i >= carouselImgs.size()) return SLOT_HEIGHT;
+        Image img = carouselImgs.get(i);
+        if (img.getHeight() == 0) return SLOT_HEIGHT;
+        return (img.getWidth() / img.getHeight()) * SLOT_HEIGHT;
+    }
+
+    // Total belt width = sum of all natural widths + gaps
+    private double totalBeltWidth() {
+        double total = 0;
+        for (int i = 0; i < carouselImgs.size(); i++) {
+            total += slotWidth(i) + GAP;
+        }
+        return total;
+    }
+
     private void startCarousel() {
-        loadCarouselImage(CAROUSEL_IMAGES[carouselIndex]);
+        if (carouselImgs.isEmpty()) return;
 
-        carouselTimeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> {
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(400), carouselImage);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-            fadeOut.setOnFinished(ev -> {
-                carouselIndex = (carouselIndex + 1) % CAROUSEL_IMAGES.length;
-                loadCarouselImage(CAROUSEL_IMAGES[carouselIndex]);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), carouselImage);
-                fadeIn.setFromValue(0.0);
-                fadeIn.setToValue(1.0);
-                fadeIn.play();
-            });
-            fadeOut.play();
-        }));
-        carouselTimeline.setCycleCount(Timeline.INDEFINITE);
-        carouselTimeline.play();
+        carouselTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                carouselOffset += SPEED;
+                double belt = totalBeltWidth();
+                if (carouselOffset >= belt) {
+                    carouselOffset -= belt;
+                }
+                drawCarousel();
+            }
+        };
+        carouselTimer.start();
     }
 
-    private void loadCarouselImage(String name) {
-        try {
-            Image img = new Image(
-                    getClass().getResourceAsStream("/Images/" + name + ".png")
-            );
-            carouselImage.setImage(img);
-        } catch (Exception e) {
-            System.out.println("Carousel image not found: " + name + ".png");
+    private void drawCarousel() {
+        if (carouselCanvas == null || carouselImgs.isEmpty()) return;
+
+        GraphicsContext gc  = carouselCanvas.getGraphicsContext2D();
+        double canvasW      = carouselCanvas.getWidth();
+        double canvasH      = carouselCanvas.getHeight();
+        double belt         = totalBeltWidth();
+
+        gc.clearRect(0, 0, canvasW, canvasH);
+
+        // draw three cycles so the canvas is always fully covered
+        // regardless of how wide the canvas is vs the belt
+        for (int cycle = 0; cycle < 3; cycle++) {
+            double x = cycle * belt - carouselOffset;
+            for (int i = 0; i < carouselImgs.size(); i++) {
+                double w = slotWidth(i);
+                double y = (canvasH - SLOT_HEIGHT) / 2.0;
+
+                // clip check — skip if completely off screen
+                if (x + w >= 0 && x <= canvasW) {
+                    gc.drawImage(carouselImgs.get(i), x, y, w, SLOT_HEIGHT);
+                }
+
+                x += w + GAP;
+            }
         }
     }
 
@@ -235,6 +287,7 @@ public class RahkEmStartScreen extends Application {
     // =========================================================
     private String getThemeBg(String theme) {
         switch (theme) {
+            case "WSA":      return "white";
             case "Dark":     return "#1a1a1a";
             case "Light":    return "#f5f5f5";
             case "Blue":     return "#1a2a4a";
@@ -251,14 +304,14 @@ public class RahkEmStartScreen extends Application {
             case "Compute":
             case "Geo":
             case "Science":
-            case "Lit":
-            case "WSA":      return "white";
+            case "Lit":      return "white";
             default:         return "#1a1a1a";
         }
     }
 
     private String getThemeBtnBg(String theme) {
         switch (theme) {
+            case "WSA":      return "#0a1a5c";
             case "Dark":     return "#2f2f2f";
             case "Light":    return "#d3d6da";
             case "Blue":     return "#4d79ff";
@@ -276,7 +329,6 @@ public class RahkEmStartScreen extends Application {
             case "Geo":      return "#1a3a6e";
             case "Science":  return "#0d2b5e";
             case "Lit":      return "#1a1f6e";
-            case "WSA":      return "#0a1a5c";
             default:         return "#2f2f2f";
         }
     }
@@ -291,6 +343,7 @@ public class RahkEmStartScreen extends Application {
 
     private String getThemeTitleText(String theme) {
         switch (theme) {
+            case "WSA":     return "#0a1a5c";
             case "Light":   return "#222222";
             case "Bell":    return "#d4af37";
             case "Math":    return "#1a237e";
@@ -298,13 +351,13 @@ public class RahkEmStartScreen extends Application {
             case "Geo":     return "#1a3a6e";
             case "Science": return "#0d2b5e";
             case "Lit":     return "#1a1f6e";
-            case "WSA":     return "#0a1a5c";
             default:        return "white";
         }
     }
 
     private String getThemeDropBg(String theme) {
         switch (theme) {
+            case "WSA":      return "#0a1a5c";
             case "Light":    return "#d3d6da";
             case "Blue":     return "#4d79ff";
             case "Ocean":    return "#006994";
@@ -321,7 +374,6 @@ public class RahkEmStartScreen extends Application {
             case "Geo":      return "#1a3a6e";
             case "Science":  return "#0d2b5e";
             case "Lit":      return "#1a1f6e";
-            case "WSA":      return "#0a1a5c";
             default:         return "#2f2f2f";
         }
     }
@@ -352,6 +404,7 @@ public class RahkEmStartScreen extends Application {
     // =========================================================
     private void loadGame(GameMode mode, String difficulty, String subject) {
         try {
+            if (carouselTimer != null) carouselTimer.stop();
             String theme = themeDropdown.getValue();
             switch (difficulty) {
                 case "Baby":   loadBabyGame(mode, theme, subject);   break;
@@ -442,6 +495,7 @@ public class RahkEmStartScreen extends Application {
 
     private String getCssPath(String theme) {
         switch (theme) {
+            case "WSA":      return "/styles/wsa.css";
             case "Dark":     return "/styles/dark.css";
             case "Light":    return "/styles/light.css";
             case "Blue":     return "/styles/blue.css";
@@ -459,8 +513,7 @@ public class RahkEmStartScreen extends Application {
             case "Geo":      return "/styles/geo.css";
             case "Science":  return "/styles/science.css";
             case "Lit":      return "/styles/lit.css";
-            case "WSA":      return "/styles/wsa.css";
-            default:         return "/styles/dark.css";
+            default:         return "/styles/wsa.css";
         }
     }
 
