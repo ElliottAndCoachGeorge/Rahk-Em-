@@ -30,6 +30,10 @@ import java.util.Random;
 
 public class EasyController {
 
+    // this is basically the whole game controller thing
+    // it controls the buttons and game stuff and whatever
+
+
     // =========================================================
     // GRID LABELS — 4 columns, 6 rows
     // =========================================================
@@ -68,7 +72,9 @@ public class EasyController {
     // =========================================================
     // GAME VARIABLES
     // =========================================================
+    // word has 4 letters bc this is easy mode
     private static final int WORD_LENGTH = 4;
+    // player gets 6 tries like wordle
     private static final int MAX_ROWS = 6;
 
     private Label[][] board;
@@ -109,6 +115,7 @@ public class EasyController {
     // INITIALIZE
     // =========================================================
     @FXML
+    // this runs automatically when the game starts
     public void initialize() {
         board = new Label[][]{
                 {r0c0, r0c1, r0c2, r0c3},
@@ -142,6 +149,7 @@ public class EasyController {
     // =========================================================
     // KEYBOARD MAP
     // =========================================================
+    // connects keyboard letters to actual buttons
     private void setupKeyboardMap() {
         keyboardMap.put("Q", qButton); keyboardMap.put("W", wButton); keyboardMap.put("E", eButton);
         keyboardMap.put("R", rButton); keyboardMap.put("T", tButton); keyboardMap.put("Y", yButton);
@@ -205,6 +213,7 @@ public class EasyController {
     // =========================================================
     // LOAD WORDS
     // =========================================================
+    // loads all the words from the txt file
     private void loadWords() {
         ArrayList<String> wordList = new ArrayList<>();
         try {
@@ -235,11 +244,13 @@ public class EasyController {
     // =========================================================
     // WORD SELECTION
     // =========================================================
+    // picks a random word for free play mode
     private String getRandomWord() {
         if (WORDS == null || WORDS.length == 0) return "FISH";
         return WORDS[new Random().nextInt(WORDS.length)];
     }
 
+    // gives everybody the same word for the day
     private String getDailyWord() {
         if (WORDS == null || WORDS.length == 0) return "FISH";
         LocalDate start = LocalDate.of(2024, 1, 1);
@@ -250,12 +261,14 @@ public class EasyController {
     // =========================================================
     // INPUT
     // =========================================================
+    // checks what key the player pressed
     private void handleKeyTyped(KeyEvent event) {
         String character = event.getCharacter().toUpperCase();
         if (!character.matches("[A-Z]")) { event.consume(); return; }
         addLetter(character);
     }
 
+    // adds the typed letter onto the board
     private void addLetter(String letter) {
         if (currentCol < WORD_LENGTH) {
             Label tile = board[currentRow][currentCol];
@@ -265,6 +278,7 @@ public class EasyController {
         }
     }
 
+    // backspace thing basically
     private void deleteLetter() {
         if (currentCol > 0) {
             currentCol--;
@@ -272,6 +286,7 @@ public class EasyController {
         }
     }
 
+    // clears the whole row if needed
     private void clearRow() {
         for (int i = 0; i < WORD_LENGTH; i++) board[currentRow][i].setText("");
         currentCol = 0;
@@ -280,6 +295,7 @@ public class EasyController {
     // =========================================================
     // POP ANIMATION
     // =========================================================
+    // little animation so the tiles pop when typing
     private void playPopAnimation(Label tile) {
         ScaleTransition pop = new ScaleTransition(Duration.millis(100), tile);
         pop.setFromX(1.0); pop.setFromY(1.0);
@@ -292,6 +308,7 @@ public class EasyController {
     // =========================================================
     // BOUNCE ROW
     // =========================================================
+    // shakes the row if the word isnt valid
     private void shakeRow(int row) {
         SequentialTransition sequence = new SequentialTransition();
         for (int c = 0; c < WORD_LENGTH; c++) {
@@ -310,6 +327,7 @@ public class EasyController {
     // =========================================================
     // SUBMIT GUESS
     // =========================================================
+    // checks if the guess is right or wrong
     private void submitGuess() {
         if (currentCol < WORD_LENGTH) return;
 
@@ -378,12 +396,15 @@ public class EasyController {
     // =========================================================
     // TILE COLORS
     // =========================================================
+    // green means correct spot
     private void setTileGreen(Label tile) {
         tile.setStyle("-fx-background-color:#6aaa64;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
+    // yellow means right letter wrong spot
     private void setTileYellow(Label tile) {
         tile.setStyle("-fx-background-color:#c9b458;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
+    // gray means not in the word
     private void setTileGray(Label tile) {
         tile.setStyle("-fx-background-color:#787c7e;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
@@ -391,6 +412,7 @@ public class EasyController {
     // =========================================================
     // KEYBOARD COLORS
     // =========================================================
+    // changes keyboard colors too
     private void updateKeyboardColor(String letter, String color) {
         Button key = keyboardMap.get(letter);
         if (key == null) return;
@@ -407,6 +429,7 @@ public class EasyController {
     // =========================================================
     // RESTART
     // =========================================================
+    // resets literally everything
     private void restartGame() {
         currentRow = 0;
         currentCol = 0;
@@ -422,6 +445,7 @@ public class EasyController {
     // =========================================================
     // THEME
     // =========================================================
+    // changes the game colors/theme
     private void applyTheme(String theme) {
         currentTheme = theme;
         Scene scene = rootPane.getScene();
@@ -432,6 +456,7 @@ public class EasyController {
     // =========================================================
 // SUBJECT / IMAGE
 // =========================================================
+    // changes the image/logo depending on subject
     public void setSubject(String subject) {
         if (logoImage == null) return;
         String imageName = subject.toLowerCase() + ".png";
@@ -448,6 +473,7 @@ public class EasyController {
     // =========================================================
     // WIN / LOSE
     // =========================================================
+    // pops up when the player wins
     private void showWinWindow() {
         Stage winStage = new Stage();
         Label winLabel = new Label("YOU WIN!");
@@ -470,6 +496,7 @@ public class EasyController {
         winStage.show();
     }
 
+    // pops up when the player loses rip
     private void showLoseWindow() {
         Stage loseStage = new Stage();
         Label loseLabel = new Label("YOU LOSE!");

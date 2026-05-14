@@ -30,6 +30,10 @@ import java.util.Random;
 
 public class BabyController {
 
+    // this class runs the baby mode game stuff
+    // honestly its mostly copy pasted but smaller
+
+
     // =========================================================
     // GRID LABELS — 3 columns, 6 rows
     // =========================================================
@@ -68,7 +72,9 @@ public class BabyController {
     // =========================================================
     // GAME VARIABLES
     // =========================================================
+    // only 3 letters bc this is baby mode lol
     private static final int WORD_LENGTH = 3;
+    // player gets 6 guesses total
     private static final int MAX_ROWS = 6;
 
     private Label[][] board;
@@ -109,6 +115,7 @@ public class BabyController {
     // INITIALIZE
     // =========================================================
     @FXML
+    // this runs when the screen loads in
     public void initialize() {
         board = new Label[][]{
                 {r0c0, r0c1, r0c2},
@@ -142,6 +149,7 @@ public class BabyController {
     // =========================================================
     // KEYBOARD MAP
     // =========================================================
+    // links keyboard letters to the buttons
     private void setupKeyboardMap() {
         keyboardMap.put("Q", qButton); keyboardMap.put("W", wButton); keyboardMap.put("E", eButton);
         keyboardMap.put("R", rButton); keyboardMap.put("T", tButton); keyboardMap.put("Y", yButton);
@@ -205,6 +213,7 @@ public class BabyController {
     // =========================================================
     // LOAD WORDS
     // =========================================================
+    // gets words from the txt file thing
     private void loadWords() {
         ArrayList<String> wordList = new ArrayList<>();
         try {
@@ -235,11 +244,13 @@ public class BabyController {
     // =========================================================
     // WORD SELECTION
     // =========================================================
+    // picks random word for free play
     private String getRandomWord() {
         if (WORDS == null || WORDS.length == 0) return "CAT";
         return WORDS[new Random().nextInt(WORDS.length)];
     }
 
+    // gives same word every day
     private String getDailyWord() {
         if (WORDS == null || WORDS.length == 0) return "CAT";
         LocalDate start = LocalDate.of(2024, 1, 1);
@@ -250,12 +261,14 @@ public class BabyController {
     // =========================================================
     // INPUT
     // =========================================================
+    // checks what key user typed
     private void handleKeyTyped(KeyEvent event) {
         String character = event.getCharacter().toUpperCase();
         if (!character.matches("[A-Z]")) { event.consume(); return; }
         addLetter(character);
     }
 
+    // puts letter onto the board
     private void addLetter(String letter) {
         if (currentCol < WORD_LENGTH) {
             Label tile = board[currentRow][currentCol];
@@ -265,6 +278,7 @@ public class BabyController {
         }
     }
 
+    // deletes a letter with backspace
     private void deleteLetter() {
         if (currentCol > 0) {
             currentCol--;
@@ -272,6 +286,7 @@ public class BabyController {
         }
     }
 
+    // clears the whole row if needed
     private void clearRow() {
         for (int i = 0; i < WORD_LENGTH; i++) board[currentRow][i].setText("");
         currentCol = 0;
@@ -280,6 +295,7 @@ public class BabyController {
     // =========================================================
     // POP ANIMATION
     // =========================================================
+    // makes the tile pop a little when typing
     private void playPopAnimation(Label tile) {
         ScaleTransition pop = new ScaleTransition(Duration.millis(100), tile);
         pop.setFromX(1.0); pop.setFromY(1.0);
@@ -292,6 +308,7 @@ public class BabyController {
     // =========================================================
     // BOUNCE ROW
     // =========================================================
+    // shakes row if word is invalid
     private void shakeRow(int row) {
         SequentialTransition sequence = new SequentialTransition();
         for (int c = 0; c < WORD_LENGTH; c++) {
@@ -310,6 +327,7 @@ public class BabyController {
     // =========================================================
     // SUBMIT GUESS
     // =========================================================
+    // checks the guess and colors stuff
     private void submitGuess() {
         if (currentCol < WORD_LENGTH) return;
 
@@ -378,12 +396,15 @@ public class BabyController {
     // =========================================================
     // TILE COLORS
     // =========================================================
+    // green = correct letter and spot
     private void setTileGreen(Label tile) {
         tile.setStyle("-fx-background-color:#6aaa64;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
+    // yellow = right letter wrong spot
     private void setTileYellow(Label tile) {
         tile.setStyle("-fx-background-color:#c9b458;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
+    // gray means the letter isnt there
     private void setTileGray(Label tile) {
         tile.setStyle("-fx-background-color:#787c7e;-fx-background-radius:6;-fx-text-fill:white;-fx-font-size:34;-fx-font-family:'Arial';-fx-font-weight:bold;");
     }
@@ -391,6 +412,7 @@ public class BabyController {
     // =========================================================
     // KEYBOARD COLORS
     // =========================================================
+    // updates keyboard colors too
     private void updateKeyboardColor(String letter, String color) {
         Button key = keyboardMap.get(letter);
         if (key == null) return;
@@ -407,6 +429,7 @@ public class BabyController {
     // =========================================================
     // RESTART
     // =========================================================
+    // resets game stuff for another round
     private void restartGame() {
         currentRow = 0;
         currentCol = 0;
@@ -422,6 +445,7 @@ public class BabyController {
     // =========================================================
     // THEME
     // =========================================================
+    // changes colors/themes
     private void applyTheme(String theme) {
         currentTheme = theme;
         Scene scene = rootPane.getScene();
@@ -432,6 +456,7 @@ public class BabyController {
     // =========================================================
 // SUBJECT / IMAGE
 // =========================================================
+    // changes logo image based on subject
     public void setSubject(String subject) {
         if (logoImage == null) return;
         String imageName = subject.toLowerCase() + ".png";
@@ -448,6 +473,7 @@ public class BabyController {
     // =========================================================
     // WIN / LOSE
     // =========================================================
+    // window pops up when player wins
     private void showWinWindow() {
         Stage winStage = new Stage();
         Label winLabel = new Label("YOU WIN!");
@@ -470,6 +496,7 @@ public class BabyController {
         winStage.show();
     }
 
+    // window pops up when player loses
     private void showLoseWindow() {
         Stage loseStage = new Stage();
         Label loseLabel = new Label("YOU LOSE!");

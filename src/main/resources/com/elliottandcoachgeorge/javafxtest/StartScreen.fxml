@@ -44,11 +44,6 @@
                     <String fx:value="The Four"/>
                     <String fx:value="Storm"/>
                     <String fx:value="Orange"/>
-                    <String fx:value="Math"/>
-                    <String fx:value="Compute"/>
-                    <String fx:value="Geo"/>
-                    <String fx:value="Science"/>
-                    <String fx:value="Lit"/>
                 </FXCollections>
             </items>
         </ComboBox>
